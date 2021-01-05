@@ -54,7 +54,7 @@ function Info(chatId, contentId) {
 							videos = data;
 						})
 						.catch((err) => console.log(err));					
-			
+			console.log(details);
 			let caption = '';
 			caption += `🎬 <b>${details.title}</b>`;
 
@@ -93,10 +93,10 @@ function Info(chatId, contentId) {
 			}
 			
 			let poster = (details.poster_path == null || details.poster_path == undefined ? {source : "img/placeholder.png"} : `https://image.tmdb.org/t/p/original${details.poster_path}`);
-
-			let keyboard = [[{"text":`Recommendations for "${details.title}"`,"callback_data":ACTION_TYPES.recommendMovies + ':' + details.id + ';' + details.title.substr(0, 40) + (details.title.length > 40 ? '..' : ''),"hide":false}],
-							[{"text":`Cast`,"callback_data":ACTION_TYPES.castMovies + ':' + details.id + ';' + details.title.substr(0, 40) + (details.title.length > 40 ? '..' : ''),"hide":false}, 
-							 {"text":`Crew`,"callback_data":ACTION_TYPES.crewMovies + ':' + details.id + ';' + details.title.substr(0, 40) + (details.title.length > 40 ? '..' : ''),"hide":false}]];
+	
+			let keyboard = [[{"text":`Recommendations for "${details.title}"`,"callback_data":ACTION_TYPES.recommendMovies + ':' + details.id + ';' + details.title.substr(0, 38) + (details.title.length > 38 ? '..' : ''),"hide":false}],
+							[{"text":`Cast`,"callback_data":ACTION_TYPES.castMovies + ':' + details.id + ';' + details.title.substr(0, 38) + (details.title.length > 38 ? '..' : ''),"hide":false}, 
+							 {"text":`Crew`,"callback_data":ACTION_TYPES.crewMovies + ':' + details.id + ';' + details.title.substr(0, 38) + (details.title.length > 38 ? '..' : ''),"hide":false}]];
 			
 			let trailers = '';
 			if(videos.results != false){
@@ -171,8 +171,8 @@ function Info(chatId, contentId) {
 			
 			let photo = (details.profile_path == null || details.profile_path == undefined ? {source : "img/placeholder.png"} : `https://image.tmdb.org/t/p/original/${details.profile_path}`);
 			
-			let keyboard = [[{"text":`Movies`,"callback_data":ACTION_TYPES.starredInMovies + ':' + details.id + ';' + details.name,"hide":false},
-						     {"text":`TV Shows`,"callback_data":ACTION_TYPES.starredInTv + ':' + details.id + ';' + details.name,"hide":false}]];
+			let keyboard = [[{"text":`Movies`,"callback_data":ACTION_TYPES.starredInMovies + ':' + details.id + ';' + details.name.substr(0, 38) + (details.name.length > 38 ? '..' : ''),"hide":false},
+						     {"text":`TV Shows`,"callback_data":ACTION_TYPES.starredInTv + ':' + details.id + ';' + details.name.substr(0, 38) + (details.name.length > 38 ? '..' : ''),"hide":false}]];
 					
 			if(details.imdb_id != null && details.imdb_id != undefined){
 				caption += `\n\n🌐 IMDb: \nhttps://www.imdb.com/name/${details.imdb_id}`;
@@ -259,9 +259,9 @@ function Info(chatId, contentId) {
 			
 			let poster = (details.poster_path == null || details.poster_path == undefined ? {source : "img/placeholder.png"} : `https://image.tmdb.org/t/p/original${details.poster_path}`);
 
-			let keyboard = [[{"text":`Recommendations for "${details.name}"`,"callback_data":ACTION_TYPES.recommendTv + ':' + details.id + ';' + details.name.substr(0, 40) + (details.name.length > 40 ? '..' : ''),"hide":false}],
-							[{"text":`Cast`,"callback_data":ACTION_TYPES.castTv + ':' + details.id + ';' + details.name.substr(0, 40) + (details.name.length > 40 ? '..' : ''),"hide":false}, 
-							 {"text":`Crew`,"callback_data":ACTION_TYPES.crewTv + ':' + details.id + ';' + details.name.substr(0, 40) + (details.name.length > 40 ? '..' : ''),"hide":false}]];
+			let keyboard = [[{"text":`Recommendations for "${details.name}"`,"callback_data":ACTION_TYPES.recommendTv + ':' + details.id + ';' + details.name.substr(0, 38) + (details.name.length > 38 ? '..' : ''),"hide":false}],
+							[{"text":`Cast`,"callback_data":ACTION_TYPES.castTv + ':' + details.id + ';' + details.name.substr(0, 38) + (details.name.length > 38 ? '..' : ''),"hide":false}, 
+							 {"text":`Crew`,"callback_data":ACTION_TYPES.crewTv + ':' + details.id + ';' + details.name.substr(0, 38) + (details.name.length > 38 ? '..' : ''),"hide":false}]];
 			
 			let trailers = '';
 			if(videos.results != false){
