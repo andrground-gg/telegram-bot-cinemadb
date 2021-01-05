@@ -65,9 +65,9 @@ function PeopleSearchMenu(chatId, actionType, query = '', contentId = '') {
 				if(this.actionType == ACTION_TYPES.castMovies || this.actionType == ACTION_TYPES.crewMovies)
 					peopleURL = `https://api.themoviedb.org/3/movie/${this.contentId}/credits?api_key=${process.env.API_KEY}&language=en-US`;
 				else
-					peopleURL = `https://api.themoviedb.org/3/tv/${this.contentId}/credits?api_key=${process.env.API_KEY}&language=en-US`;
+					peopleURL = `https://api.themoviedb.org/3/tv/${this.contentId}/aggregate_credits?api_key=${process.env.API_KEY}&language=en-US`;
 			}
-
+			
 			let menu = new SearchMenu(peopleURL, this.page);
 			const keyboard = await menu.createMenu(SEARCH_TYPES.people, cast, crew);
 			

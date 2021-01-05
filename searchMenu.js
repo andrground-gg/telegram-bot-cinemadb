@@ -84,10 +84,19 @@ function SearchMenu(fetchURL, page) {
 				reply[i] = callback(list[i].title + (list[i].release_date == '' || list[i].release_date == undefined ? '' : ' (' + list[i].release_date.substr(0, 4) + ')'), ACTION_TYPES.movieId + ':' + list[i].id);
 			else if(searchType == SEARCH_TYPES.people){
 				if(cast){
-					reply[i] = callback(list[i].name + ' | ' + list[i].character, ACTION_TYPES.personId + ':' + list[i].id);
+					if(list[i].character != undefined)
+						reply[i] = callback(list[i].name + ' | ' + list[i].character, ACTION_TYPES.personId + ':' + list[i].id);
+					else{
+						let roles = list[i].roles.map(a => a.character);
+						reply[i] = callback(list[i].name + ' | ' + roles.join(', '), ACTION_TYPES.personId + ':' + list[i].id);
+					}
 				}
 				else if(crew){
-					let jobs = listCopy.filter(item => item.id == list[i].id).map(a => a.job);
+					let jobs;
+					if(list[i].job != undefined)
+						jobs = listCopy.filter(item => item.id == list[i].id).map(a => a.job);
+					else
+						jobs = list[i].jobs.map(a => a.job);
 					reply[i] = callback(list[i].name + ' | ' + jobs.join(', '), ACTION_TYPES.personId + ':' + list[i].id);
 				}
 				else
