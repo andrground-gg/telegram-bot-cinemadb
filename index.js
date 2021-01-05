@@ -100,7 +100,7 @@ searchMovies.hears('Back ➡️', (ctx) => {
 				['👤 Search for People'], 
 				['📺 Search for TV Shows'],
 			]);
-	ctx.reply('Choose an option', keyboard.reply());
+	ctx.reply('⏺ Choose what type of content you want to search for', keyboard.reply());
 });
 searchMovies.hears('⭐️ Popular Movies', (ctx) => {
 	searchMenus.push(new MovieSearchMenu(ctx.update.message.chat.id, ACTION_TYPES.popularMovies));
@@ -136,7 +136,7 @@ searchTVShows.hears('Back ➡️', (ctx) => {
 				['👤 Search for People'], 
 				['📺 Search for TV Shows'],
 			]);
-	ctx.reply('Choose an option', keyboard.reply());
+	ctx.reply('⏺ Choose what type of content you want to search for', keyboard.reply());
 });
 searchTVShows.hears('⭐️ Popular TV Shows', (ctx) => {
 	searchMenus.push(new TvSearchMenu(ctx.update.message.chat.id, ACTION_TYPES.popularTv));
