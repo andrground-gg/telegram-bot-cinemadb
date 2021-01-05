@@ -54,7 +54,7 @@ function Info(chatId, contentId) {
 							videos = data;
 						})
 						.catch((err) => console.log(err));					
-			console.log(details);
+
 			let caption = '';
 			caption += `🎬 <b>${details.title}</b>`;
 
