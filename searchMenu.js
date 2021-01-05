@@ -62,13 +62,15 @@ function SearchMenu(fetchURL, page) {
 								index == self.findIndex((t) => t.id == item.id));
 						pages = parseInt(list.length / 20) + (list.length % 20 == 0? 0 : 1);
 						fakePages = (list.length / 20 - Math.floor(list.length/20) > 0.5? pages * 2 : pages * 2 - 1);
-						list.sort((a,b) => {
-							if(a.popularity < b.popularity)
-								return 1;
-							else if(a.popularity > b.popularity)
-								return -1;
-							return 0;
-						});
+						if(cast && crew){
+							list.sort((a,b) => {
+								if(a.popularity < b.popularity)
+									return 1;
+								else if(a.popularity > b.popularity)
+									return -1;
+								return 0;
+							});
+						}
 						totalPagesExist = 0;
 					}	
 				})
