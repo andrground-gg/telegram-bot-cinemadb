@@ -29,12 +29,11 @@ const SEARCH_TYPES = {
 	tvShows : 'tvShows'
 }
 
-function PeopleSearchMenu(chatId, actionType, query = '', personId = '', contentId = '') {
+function PeopleSearchMenu(chatId, actionType, query = '', contentId = '') {
 	this.page = 1;
 	this.chatId = chatId;
 	this.msgId = '';
 	this.query = query;
-	this.personId = personId;
 	this.contentId = contentId;
 	this.actionType = actionType;
 	

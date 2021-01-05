@@ -29,13 +29,12 @@ const SEARCH_TYPES = {
 	tvShows : 'tvShows'
 }
 
-function MovieSearchMenu(chatId, actionType, query = '', movieId = '', personId = '') {
+function MovieSearchMenu(chatId, actionType, query = '', contentId = '') {
 	this.page = 1;
 	this.chatId = chatId;
 	this.msgId = '';
 	this.query = query;
-	this.movieId = movieId;
-	this.personId = personId;
+	this.contentId = contentId;
 	this.actionType = actionType;
 	
 	this.displayMovies = async function(newMsg){
@@ -51,13 +50,13 @@ function MovieSearchMenu(chatId, actionType, query = '', movieId = '', personId 
 				msg = `▶️ Movies ➡️ "${this.query}":`;
 			}
 			else if(this.actionType == ACTION_TYPES.recommendMovies){
-				moviesURL = `https://api.themoviedb.org/3/movie/${this.movieId}/recommendations?api_key=${process.env.API_KEY}&language=en-US&page=${actualPage}`;
+				moviesURL = `https://api.themoviedb.org/3/movie/${this.contentId}/recommendations?api_key=${process.env.API_KEY}&language=en-US&page=${actualPage}`;
 				msg = `▶️ Recommendations ➡️ "${this.query}":`;
 			}
 			else if(this.actionType == ACTION_TYPES.starredInMovies){
 				cast = 1;
 				crew = 1;
-				moviesURL = `https://api.themoviedb.org/3/person/${this.personId}/movie_credits?api_key=${process.env.API_KEY}&language=en-US`;
+				moviesURL = `https://api.themoviedb.org/3/person/${this.contentId}/movie_credits?api_key=${process.env.API_KEY}&language=en-US`;
 				msg = `▶️ Movies ➡️ ${this.query}`
 			}
 			else if(this.actionType == ACTION_TYPES.popularMovies){

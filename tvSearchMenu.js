@@ -29,13 +29,12 @@ const SEARCH_TYPES = {
 	tvShows : 'tvShows'
 }
 
-function TvSearchMenu(chatId, actionType, query = '', tvId = '', personId = '') {
+function TvSearchMenu(chatId, actionType, query = '', contentId = '') {
 	this.page = 1;
 	this.chatId = chatId;
 	this.msgId = '';
 	this.query = query;
-	this.tvId = tvId;
-	this.personId = personId;
+	this.contentId = contentId;
 	this.actionType = actionType;
 	
 	this.displayTv = async function(newMsg){
@@ -51,13 +50,13 @@ function TvSearchMenu(chatId, actionType, query = '', tvId = '', personId = '') 
 				msg = `▶️ TV Shows ➡️ "${this.query}":`;
 			}
 			else if(this.actionType == ACTION_TYPES.recommendTv){
-				tvURL = `https://api.themoviedb.org/3/tv/${this.tvId}/recommendations?api_key=${process.env.API_KEY}&language=en-US&page=${actualPage}`;
+				tvURL = `https://api.themoviedb.org/3/tv/${this.contentId}/recommendations?api_key=${process.env.API_KEY}&language=en-US&page=${actualPage}`;
 				msg = `▶️ Recommendations ➡️ "${this.query}":`;
 			}
 			else if(this.actionType == ACTION_TYPES.starredInTv){
 				cast = 1;
 				crew = 1;
-				tvURL = `https://api.themoviedb.org/3/person/${this.personId}/tv_credits?api_key=${process.env.API_KEY}&language=en-US`;
+				tvURL = `https://api.themoviedb.org/3/person/${this.contentId}/tv_credits?api_key=${process.env.API_KEY}&language=en-US`;
 				msg = `▶️ TV Shows ➡️ ${this.query}`;
 			}
 			else if(this.actionType == ACTION_TYPES.popularTv){
