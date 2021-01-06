@@ -169,7 +169,7 @@ function Info(chatId, contentId) {
 					caption += '...';
 			}
 			
-			let photo = (details.profile_path == null || details.profile_path == undefined ? {source : "img/placeholder.png"} : `https://image.tmdb.org/t/p/original/${details.profile_path}`);
+			let photo = (details.profile_path == null || details.profile_path == undefined ? {source : "img/placeholder.png"} : `https://image.tmdb.org/t/p/original${details.profile_path}`);
 			
 			let keyboard = [[{"text":`Movies`,"callback_data":ACTION_TYPES.starredInMovies + ':' + details.id + ';' + details.name.substr(0, 38) + (details.name.length > 38 ? '..' : ''),"hide":false},
 						     {"text":`TV Shows`,"callback_data":ACTION_TYPES.starredInTv + ':' + details.id + ';' + details.name.substr(0, 38) + (details.name.length > 38 ? '..' : ''),"hide":false}]];
