@@ -170,6 +170,11 @@ function Info(chatId, contentId) {
 				caption += `\n\n${details.biography}`;
 			}
 			
+<<<<<<< HEAD
+=======
+			let photo = (details.profile_path == null || details.profile_path == undefined ? {source : "img/placeholder.png"} : `https://image.tmdb.org/t/p/original${details.profile_path}`);
+			
+>>>>>>> e22c7c9313432969bb66532ab572a1aea793fcee
 			let keyboard = [[{"text":`Movies`,"callback_data":ACTION_TYPES.starredInMovies + ':' + details.id + ';' + details.name.substr(0, 38) + (details.name.length > 38 ? '..' : ''),"hide":false},
 						     {"text":`TV Shows`,"callback_data":ACTION_TYPES.starredInTv + ':' + details.id + ';' + details.name.substr(0, 38) + (details.name.length > 38 ? '..' : ''),"hide":false}]];
 					
