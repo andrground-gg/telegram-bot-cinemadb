@@ -55,7 +55,8 @@ function Info(chatId, contentId) {
 						})
 						.catch((err) => console.log(err));					
 
-			let caption = '';
+			let poster = (details.poster_path == null || details.poster_path == undefined ? '' : `https://image.tmdb.org/t/p/original${details.poster_path}`);
+			let caption = `<a href = "${poster}"> </a>`;
 			caption += `🎬 <b>${details.title}</b>`;
 
 			if(details.tagline != '')
@@ -86,13 +87,16 @@ function Info(chatId, contentId) {
 					rating = `🔴`;
 				caption += `\n${rating} ${details.vote_average * 10}%`;
 			}
-			if(details.overview != ''){
-				caption += `\n\n${details.overview.substr(0, 750)}`;
-				if(caption.length > 750)
-					caption += '...';
-			}
+			if(details.production_countries != false && details.production_countries != undefined)
+				caption += `\n\n✈️ Production Countries: ${details.production_countries.map(a => a.name).join(', ')}`;
+
+			let director = credits.crew.filter(a => a.job == 'Director').map(a => a.name);
+			if(director != '')
+				caption += `\n\n📽 Director: ${director.join(', ')}`;
 			
-			let poster = (details.poster_path == null || details.poster_path == undefined ? {source : "img/placeholder.png"} : `https://image.tmdb.org/t/p/original${details.poster_path}`);
+			if(details.overview != ''){
+				caption += `\n\n${details.overview}`;
+			}
 	
 			let keyboard = [[{"text":`Recommendations for "${details.title}"`,"callback_data":ACTION_TYPES.recommendMovies + ':' + details.id + ';' + details.title.substr(0, 38) + (details.title.length > 38 ? '..' : ''),"hide":false}],
 							[{"text":`Cast`,"callback_data":ACTION_TYPES.castMovies + ':' + details.id + ';' + details.title.substr(0, 38) + (details.title.length > 38 ? '..' : ''),"hide":false}, 
@@ -114,11 +118,10 @@ function Info(chatId, contentId) {
 			}
 			
 			caption += trailers;
-			bot.telegram.sendPhoto(this.chatId, poster,{"reply_markup": {"inline_keyboard":keyboard}, "caption": caption, "parse_mode" : 'HTML'});
+			bot.telegram.sendMessage(this.chatId, caption, {"reply_markup": {"inline_keyboard":keyboard}, "parse_mode" : 'HTML'});
 		}
 		else if(actionType == ACTION_TYPES.personId){
 			let detailsURL = `https://api.themoviedb.org/3/person/${this.contentId}?api_key=${process.env.API_KEY}&language=en-US`;
-
 			let details;
 			
 			await fetch(detailsURL, { headers: { 'Content-Type':'application/json' }})
@@ -129,9 +132,9 @@ function Info(chatId, contentId) {
 						.catch((err) => console.log(err));
 						
 
-			
-			let caption = '';
-			caption += ` <b>👤 ${details.name}</b>`;
+			let photo = (details.profile_path == null || details.profile_path == undefined ? '' : `https://image.tmdb.org/t/p/original${details.profile_path}`);
+			let caption = `<a href = "${photo}"> </a>`;
+			caption += `<b>👤 ${details.name}</b>`;
 
 			if(details.known_for_department != '')
 				caption +=`\n💼 ${details.known_for_department}`;
@@ -164,12 +167,8 @@ function Info(chatId, contentId) {
 			}
 
 			if(details.biography != ''){
-				caption += `\n\n${details.biography.substr(0, 800)}`;
-				if(caption.length > 800)
-					caption += '...';
+				caption += `\n\n${details.biography}`;
 			}
-			
-			let photo = (details.profile_path == null || details.profile_path == undefined ? {source : "img/placeholder.png"} : `https://image.tmdb.org/t/p/original/${details.profile_path}`);
 			
 			let keyboard = [[{"text":`Movies`,"callback_data":ACTION_TYPES.starredInMovies + ':' + details.id + ';' + details.name.substr(0, 38) + (details.name.length > 38 ? '..' : ''),"hide":false},
 						     {"text":`TV Shows`,"callback_data":ACTION_TYPES.starredInTv + ':' + details.id + ';' + details.name.substr(0, 38) + (details.name.length > 38 ? '..' : ''),"hide":false}]];
@@ -177,11 +176,11 @@ function Info(chatId, contentId) {
 			if(details.imdb_id != null && details.imdb_id != undefined){
 				caption += `\n\n🌐 IMDb: \nhttps://www.imdb.com/name/${details.imdb_id}`;
 			}
-			bot.telegram.sendPhoto(this.chatId, photo,{"reply_markup": {"inline_keyboard":keyboard}, "caption": caption, "parse_mode" : 'HTML'});
+			bot.telegram.sendMessage(this.chatId, caption,{"reply_markup": {"inline_keyboard":keyboard}, "parse_mode" : 'HTML'});
 		}
 		else if(actionType == ACTION_TYPES.tvId){
 			let detailsURL = `https://api.themoviedb.org/3/tv/${this.contentId}?api_key=${process.env.API_KEY}&language=en-US`;
-			let creditsURL = `https://api.themoviedb.org/3/tv/${this.contentId}/aggregate_credits?api_key=${process.env.API_KEY}&language=en-US`;
+			let creditsURL = `https://api.themoviedb.org/3/tv/${this.contentId}/credits?api_key=${process.env.API_KEY}&language=en-US`;
 			let videosURL = `https://api.themoviedb.org/3/tv/${this.contentId}/videos?api_key=${process.env.API_KEY}&language=en-US`;
 			let externalIdsURL = `https://api.themoviedb.org/3/tv/${this.contentId}/external_ids?api_key=${process.env.API_KEY}&language=en-US`;
 			let details, credits, videos, externalIds;
@@ -193,13 +192,6 @@ function Info(chatId, contentId) {
 						})
 						.catch((err) => console.log(err));
 						
-			await fetch(creditsURL, { headers: { 'Content-Type':'application/json' }})
-						.then((res) => res.json())
-						.then((data) => {
-							credits = data;
-						})
-						.catch((err) => console.log(err));
-			
 			await fetch(videosURL, { headers: { 'Content-Type':'application/json' }})
 						.then((res) => res.json())
 						.then((data) => {
@@ -213,8 +205,8 @@ function Info(chatId, contentId) {
 							externalIds = data;
 						})
 						.catch((err) => console.log(err));
-
-			let caption = '';
+			let poster = (details.poster_path == null || details.poster_path == undefined ? '' : `https://image.tmdb.org/t/p/original${details.poster_path}`);
+			let caption = `<a href = "${poster}"> </a>`;
 			caption += `📺 <b>${details.name}</b>`;
 			
 			if(details.tagline != '')
@@ -251,13 +243,15 @@ function Info(chatId, contentId) {
 					rating = `🔴`;
 				caption += `\n${rating} ${details.vote_average * 10}%`;
 			}
-			if(details.overview != ''){
-				caption += `\n\n${details.overview.substr(0, 750)}`;
-				if(caption.length > 750)
-					caption += '...';
-			}
+			if(details.production_countries != false && details.production_countries != undefined)
+				caption += `\n\n✈️ Production Countries: ${details.production_countries.map(a => a.name).join(', ')}`;
+
+			let director = details.created_by.map(a => a.name);
+			if(director != '')
+				caption += `\n\n📽 Director: ${director.join(', ')}`;
 			
-			let poster = (details.poster_path == null || details.poster_path == undefined ? {source : "img/placeholder.png"} : `https://image.tmdb.org/t/p/original${details.poster_path}`);
+			if(details.overview != '')
+				caption += `\n\n${details.overview}`;	
 
 			let keyboard = [[{"text":`Recommendations for "${details.name}"`,"callback_data":ACTION_TYPES.recommendTv + ':' + details.id + ';' + details.name.substr(0, 38) + (details.name.length > 38 ? '..' : ''),"hide":false}],
 							[{"text":`Cast`,"callback_data":ACTION_TYPES.castTv + ':' + details.id + ';' + details.name.substr(0, 38) + (details.name.length > 38 ? '..' : ''),"hide":false}, 
@@ -279,7 +273,7 @@ function Info(chatId, contentId) {
 			}
 			
 			caption += trailers;
-			bot.telegram.sendPhoto(this.chatId, poster,{"reply_markup": {"inline_keyboard":keyboard}, "caption": caption, "parse_mode" : 'HTML'});
+			bot.telegram.sendMessage(this.chatId, caption,{"reply_markup": {"inline_keyboard":keyboard}, "parse_mode" : 'HTML'});
 		}
 	}
 }
