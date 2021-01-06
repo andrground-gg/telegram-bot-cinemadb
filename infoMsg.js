@@ -180,7 +180,6 @@ function Info(chatId, contentId) {
 		}
 		else if(actionType == ACTION_TYPES.tvId){
 			let detailsURL = `https://api.themoviedb.org/3/tv/${this.contentId}?api_key=${process.env.API_KEY}&language=en-US`;
-			let creditsURL = `https://api.themoviedb.org/3/tv/${this.contentId}/credits?api_key=${process.env.API_KEY}&language=en-US`;
 			let videosURL = `https://api.themoviedb.org/3/tv/${this.contentId}/videos?api_key=${process.env.API_KEY}&language=en-US`;
 			let externalIdsURL = `https://api.themoviedb.org/3/tv/${this.contentId}/external_ids?api_key=${process.env.API_KEY}&language=en-US`;
 			let details, credits, videos, externalIds;
