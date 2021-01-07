@@ -36,10 +36,9 @@ function SearchMenu(fetchURL, page) {
 	this.createMenu = async function(searchType, cast = 0, crew = 0){
 
 		let actualPage = (this.page % 1 ? this.page - 0.5 : this.page);
-		let list = [];
+		let list = [], listCast = [], listCrew = [], listCopy, listCopyCrew, listCopyCast;
 		let pages, results;
 		let totalPagesExist; 
-		let listCopy;
 		await fetch(this.fetchURL, { headers: { 'Content-Type':'application/json' }})
 				.then((res) => res.json())
 				.then((data) => {
@@ -51,10 +50,11 @@ function SearchMenu(fetchURL, page) {
 					}
 					else{
 						if(cast && crew){
-							let listCast = data.cast;
-							let listCrew = data.crew;
-							let listCopyCrew = listCrew;
-							let listCopyCast = listCast;
+							listCast = data.cast;
+							listCrew = data.crew;
+							listCopyCrew = listCrew;
+							listCopyCast = listCast;
+							
 							listCrew = listCrew.filter((item, index, self) => 
 								index == self.findIndex((t) => t.id == item.id));
 							listCast = listCast.filter((item, index, self) => 
@@ -97,10 +97,10 @@ function SearchMenu(fetchURL, page) {
 		let reply = [];
 		for(let i = (totalPagesExist ? (this.page % 1 ? 10 : 0) : (fakePage-1) * 10); i < (totalPagesExist ? (this.page % 1 ? 20 : 10) : (fakePage-1) * 10 + 10) && i < list.length; i++){
 			if(searchType == SEARCH_TYPES.movies){
+				let additionalInfo = '';
 				if(cast && crew){
 					let jobs = listCopyCrew.filter(item => item.id == list[i].id && list[i].job != undefined).map(a => a.job);
 					let roles = listCopyCast.filter(item => item.id == list[i].id && list[i].character != undefined).map(a => a.character);
-					let additionalInfo = '';
 					if(jobs == ''){
 						roles = roles.filter(a => a != '');
 						if(roles != false)
@@ -110,10 +110,8 @@ function SearchMenu(fetchURL, page) {
 					}
 					else
 						additionalInfo = ' (Crew) | ' + jobs.join(', ');
-					reply[i] = callback(list[i].title + (list[i].release_date == '' || list[i].release_date == undefined ? '' : ' (' + list[i].release_date.substr(0, 4) + ')') + additionalInfo, ACTION_TYPES.movieId + ':' + list[i].id);
-				}
-				else
-					reply[i] = callback(list[i].title + (list[i].release_date == '' || list[i].release_date == undefined ? '' : ' (' + list[i].release_date.substr(0, 4) + ')'), ACTION_TYPES.movieId + ':' + list[i].id);
+				} 
+				reply[i] = callback(list[i].title + (list[i].release_date == '' || list[i].release_date == undefined ? '' : ' (' + list[i].release_date.substr(0, 4) + ')') + additionalInfo, ACTION_TYPES.movieId + ':' + list[i].id);
 			}
 			else if(searchType == SEARCH_TYPES.people){
 				if(cast){
@@ -136,10 +134,10 @@ function SearchMenu(fetchURL, page) {
 					reply[i] = callback(list[i].name, ACTION_TYPES.personId + ':' + list[i].id);
 			}
 			else if(searchType == SEARCH_TYPES.tvShows){
+				let additionalInfo = '';
 				if(cast && crew){
 					let jobs = listCopyCrew.filter(item => item.id == list[i].id && list[i].job != undefined).map(a => a.job);
 					let roles = listCopyCast.filter(item => item.id == list[i].id && list[i].character != undefined).map(a => a.character);
-					let additionalInfo = '';
 					if(jobs == ''){
 						roles = roles.filter(a => a != '');
 						if(roles != false)
@@ -149,10 +147,8 @@ function SearchMenu(fetchURL, page) {
 					}
 					else
 						additionalInfo = ' (Crew) | ' + jobs.join(', ');
-					reply[i] = callback(list[i].name + (list[i].first_air_date == '' || list[i].first_air_date == undefined ? '' : ' (' + list[i].first_air_date.substr(0, 4) + ')') + additionalInfo, ACTION_TYPES.tvId + ':' + list[i].id);
 				}
-				else
-					reply[i] = callback(list[i].name + (list[i].first_air_date == '' || list[i].first_air_date == undefined ? '' : ' (' + list[i].first_air_date.substr(0, 4) + ')'), ACTION_TYPES.tvId + ':' + list[i].id);
+				reply[i] = callback(list[i].name + (list[i].first_air_date == '' || list[i].first_air_date == undefined ? '' : ' (' + list[i].first_air_date.substr(0, 4) + ')') + additionalInfo, ACTION_TYPES.tvId + ':' + list[i].id);
 			}
 		};
 		const kb1 = Keyboard.make(reply, {columns: 1});
