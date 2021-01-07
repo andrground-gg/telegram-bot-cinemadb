@@ -50,16 +50,30 @@ function SearchMenu(fetchURL, page) {
 						totalPagesExist = 1;
 					}
 					else{
-						if(cast && crew)
-							list = data.cast.concat(data.crew);
-						else if(cast)
-							list = data.cast;
-						else if(crew)
-							list = data.crew;
-						listCopy = list;
-						
-						list = list.filter((item, index, self) => 
+						if(cast && crew){
+							let listCast = data.cast;
+							let listCrew = data.crew;
+							let listCopyCrew = listCrew;
+							let listCopyCast = listCast;
+							listCrew = listCrew.filter((item, index, self) => 
 								index == self.findIndex((t) => t.id == item.id));
+							listCast = listCast.filter((item, index, self) => 
+								index == self.findIndex((t) => t.id == item.id));
+							list = listCast.concat(listCrew);
+						}
+						else if(cast) {
+							list = data.cast;
+							list = list.filter((item, index, self) => 
+								index == self.findIndex((t) => t.id == item.id));
+							listCopy = list;
+						}
+						else if(crew) {
+							list = data.crew;
+							list = list.filter((item, index, self) => 
+								index == self.findIndex((t) => t.id == item.id));
+							listCopy = list;
+						}
+
 						pages = parseInt(list.length / 20) + (list.length % 20 == 0? 0 : 1);
 						fakePages = (list.length / 20 - Math.floor(list.length/20) > 0.5? pages * 2 : pages * 2 - 1);
 						if(cast && crew){
@@ -82,8 +96,25 @@ function SearchMenu(fetchURL, page) {
 		let fakePage = (this.page % 1 ? actualPage * 2 : actualPage * 2 - 1);
 		let reply = [];
 		for(let i = (totalPagesExist ? (this.page % 1 ? 10 : 0) : (fakePage-1) * 10); i < (totalPagesExist ? (this.page % 1 ? 20 : 10) : (fakePage-1) * 10 + 10) && i < list.length; i++){
-			if(searchType == SEARCH_TYPES.movies)
-				reply[i] = callback(list[i].title + (list[i].release_date == '' || list[i].release_date == undefined ? '' : ' (' + list[i].release_date.substr(0, 4) + ')'), ACTION_TYPES.movieId + ':' + list[i].id);
+			if(searchType == SEARCH_TYPES.movies){
+				if(cast && crew){
+					let jobs = listCopyCrew.filter(item => item.id == list[i].id && list[i].job != undefined).map(a => a.job);
+					let roles = listCopyCast.filter(item => item.id == list[i].id && list[i].character != undefined).map(a => a.character);
+					let additionalInfo = '';
+					if(jobs == ''){
+						roles = roles.filter(a => a != '');
+						if(roles != false)
+							additionalInfo = ' (Cast) | ' + roles.join(', ');
+						else 
+							additionalInfo = ' (Cast)';
+					}
+					else
+						additionalInfo = ' (Crew) | ' + jobs.join(', ');
+					reply[i] = callback(list[i].title + (list[i].release_date == '' || list[i].release_date == undefined ? '' : ' (' + list[i].release_date.substr(0, 4) + ')') + additionalInfo, ACTION_TYPES.movieId + ':' + list[i].id);
+				}
+				else
+					reply[i] = callback(list[i].title + (list[i].release_date == '' || list[i].release_date == undefined ? '' : ' (' + list[i].release_date.substr(0, 4) + ')'), ACTION_TYPES.movieId + ':' + list[i].id);
+			}
 			else if(searchType == SEARCH_TYPES.people){
 				if(cast){
 					if(list[i].character != undefined)
@@ -104,8 +135,25 @@ function SearchMenu(fetchURL, page) {
 				else
 					reply[i] = callback(list[i].name, ACTION_TYPES.personId + ':' + list[i].id);
 			}
-			else if(searchType == SEARCH_TYPES.tvShows)
-				reply[i] = callback(list[i].name + (list[i].first_air_date == '' || list[i].first_air_date == undefined ? '' : ' (' + list[i].first_air_date.substr(0, 4) + ')'), ACTION_TYPES.tvId + ':' + list[i].id);
+			else if(searchType == SEARCH_TYPES.tvShows){
+				if(cast && crew){
+					let jobs = listCopyCrew.filter(item => item.id == list[i].id && list[i].job != undefined).map(a => a.job);
+					let roles = listCopyCast.filter(item => item.id == list[i].id && list[i].character != undefined).map(a => a.character);
+					let additionalInfo = '';
+					if(jobs == ''){
+						roles = roles.filter(a => a != '');
+						if(roles != false)
+							additionalInfo = ' (Cast) | ' + roles.join(', ');
+						else 
+							additionalInfo = ' (Cast)';
+					}
+					else
+						additionalInfo = ' (Crew) | ' + jobs.join(', ');
+					reply[i] = callback(list[i].name + (list[i].first_air_date == '' || list[i].first_air_date == undefined ? '' : ' (' + list[i].first_air_date.substr(0, 4) + ')') + additionalInfo, ACTION_TYPES.tvId + ':' + list[i].id);
+				}
+				else
+					reply[i] = callback(list[i].name + (list[i].first_air_date == '' || list[i].first_air_date == undefined ? '' : ' (' + list[i].first_air_date.substr(0, 4) + ')'), ACTION_TYPES.tvId + ':' + list[i].id);
+			}
 		};
 		const kb1 = Keyboard.make(reply, {columns: 1});
 		
