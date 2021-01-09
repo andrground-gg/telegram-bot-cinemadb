@@ -87,7 +87,14 @@ bot.use(async (ctx, next) => {
   console.log('Response time: %sms', ms);
 });
 
-bot.on('message', (ctx) => ctx.reply('⏺ Choose what type of content you want to search for'));
+bot.on('message', (ctx) => {
+	const keyboard = Keyboard.make([
+				['🎬 Search for Movies'], 
+				['👤 Search for People'], 
+				['📺 Search for TV Shows'],
+			]);
+	ctx.reply('⏺ Choose what type of content you want to search for', keyboard.reply());
+});
 
 searchMovies.enter((ctx) => {
 	const keyboard = Keyboard.make([['⭐️ Popular Movies'],['Back ➡️']]);
