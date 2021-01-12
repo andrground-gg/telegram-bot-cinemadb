@@ -36,7 +36,7 @@ function SearchMenu(fetchURL, page) {
 	this.createMenu = async function(searchType, cast = 0, crew = 0){
 
 		let actualPage = (this.page % 1 ? this.page - 0.5 : this.page);
-		let list = [], listCast = [], listCrew = [], listCopy, listCopyCrew, listCopyCast;
+		let list = [], listCast = [], listCrew = [], listCopyCrew, listCopyCast;
 		let pages, results;
 		let totalPagesExist; 
 		await fetch(this.fetchURL, { headers: { 'Content-Type':'application/json' }})
@@ -65,13 +65,13 @@ function SearchMenu(fetchURL, page) {
 							list = data.cast;
 							list = list.filter((item, index, self) => 
 								index == self.findIndex((t) => t.id == item.id));
-							listCopy = list;
+							
 						}
 						else if(crew) {
 							list = data.crew;
+							listCopyCrew = list;
 							list = list.filter((item, index, self) => 
-								index == self.findIndex((t) => t.id == item.id));
-							listCopy = list;
+								index == self.findIndex((t) => t.id == item.id));	
 						}
 
 						pages = parseInt(list.length / 20) + (list.length % 20 == 0? 0 : 1);
@@ -125,9 +125,10 @@ function SearchMenu(fetchURL, page) {
 				else if(crew){
 					let jobs;
 					if(list[i].job != undefined)
-						jobs = listCopy.filter(item => item.id == list[i].id).map(a => a.job);
+						jobs = listCopyCrew.filter(item => item.id == list[i].id).map(a => a.job);
 					else
 						jobs = list[i].jobs.map(a => a.job);
+					
 					reply[i] = callback(list[i].name + ' | ' + jobs.join(', '), ACTION_TYPES.personId + ':' + list[i].id);
 				}
 				else
