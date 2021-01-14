@@ -245,9 +245,9 @@ function Info(chatId, contentId) {
 			if(details.production_countries != false && details.production_countries != undefined)
 				caption += `\n\n✈️ Production Countries: ${details.production_countries.map(a => a.name).join(', ')}`;
 
-			let director = details.created_by.map(a => a.name);
-			if(director != '')
-				caption += `\n\n📽 Director: ${director.join(', ')}`;
+			let creator = details.created_by.map(a => a.name);
+			if(creator != '')
+				caption += `\n\n📽 Created by: ${director.join(', ')}`;
 			
 			if(details.overview != '')
 				caption += `\n\n${details.overview}`;	
