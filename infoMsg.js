@@ -247,7 +247,7 @@ function Info(chatId, contentId) {
 
 			let creator = details.created_by.map(a => a.name);
 			if(creator != '')
-				caption += `\n\n📽 Created by: ${director.join(', ')}`;
+				caption += `\n\n📽 Created by: ${creator.join(', ')}`;
 			
 			if(details.overview != '')
 				caption += `\n\n${details.overview}`;	
