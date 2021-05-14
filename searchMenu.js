@@ -1,43 +1,18 @@
-const { Telegraf } = require('telegraf');
-require('dotenv').config();
-const fetch = require('node-fetch');
-const { Keyboard, Key } = require('telegram-keyboard');
+import fetch from 'node-fetch';
+import { Keyboard, Key } from 'telegram-keyboard';
 const { callback } = Key;
-const bot = new Telegraf(process.env.BOT_TOKEN);
 
-const ACTION_TYPES = {
-    movieId: 'movieId',
-	personId: 'personId',
-	tvId : 'tvId',
-    page: 'page',
-	recommendMovies: 'recommendMovies',
-	recommendTv: 'recommendTv',
-	starredInMovies : 'starredInMovies',
-	starredInTv : 'starredInTv',
-	castMovies: 'castMovies',
-	crewMovies: 'crewMovies',
-	castTv : 'castTv',
-	crewTv : 'crewTv',
-	popularMovies : 'popularMovies',
-	popularPeople : 'popularPeople',
-	popularTv : 'popularTv'
-}
-
-const SEARCH_TYPES = {
-	movies: 'movie',
-	people: 'people',
-	tvShows : 'tvShows'
-}
+import { ACTION_TYPES, SEARCH_TYPES } from './actionAndSearchTypes.js';
 
 function SearchMenu(fetchURL, page) {
 	this.page = page;
 	this.fetchURL = fetchURL;
 	
-	this.createMenu = async function(searchType, cast = 0, crew = 0){
+	this.createMenu = async function(searchType, cast = 0, crew = 0) {
 
 		let actualPage = (this.page % 1 ? this.page - 0.5 : this.page);
 		let list = [], listCast = [], listCrew = [], listCopyCrew, listCopyCast;
-		let pages, results;
+		let pages, fakePages, destinationPage;
 		let totalPagesExist; 
 		await fetch(this.fetchURL, { headers: { 'Content-Type':'application/json' }})
 				.then((res) => res.json())
@@ -157,7 +132,6 @@ function SearchMenu(fetchURL, page) {
 		let pagesKeyboard = [];
 		let i;
 		
-		
 		switch(fakePage){
 			case 1: i = 1; break;
 			case 2: i = 0; break;
@@ -165,11 +139,10 @@ function SearchMenu(fetchURL, page) {
 			case fakePages: i = -3; break;
 			default: i = -1;
 		}
-		
 		if(fakePages > 5) {
 			pagesKeyboard.push(callback((fakePage == 1 ? '·' + 1 + '·' : (fakePage + i != 2 ? '⊴ ' + 1 : 1)), ACTION_TYPES.page + ':' + 1 + ';' + searchType));
-			while(pagesKeyboard.length < 4 && pagesKeyboard.length < fakePages-1) {
-				let destinationPage = parseFloat(this.page) + 0.5 * i;
+			while(pagesKeyboard.length < 4 && pagesKeyboard.length < fakePages - 1) {
+				destinationPage = parseFloat(this.page) + 0.5 * i;
 				//' ⊳'
 				if(fakePage + i == fakePage)
 					pagesKeyboard.push(callback( '·' + parseInt(fakePage + i) + '·',  ACTION_TYPES.page + ':' + destinationPage + ';' + searchType));
@@ -178,8 +151,8 @@ function SearchMenu(fetchURL, page) {
 				else if(pagesKeyboard.length == 3 && fakePage + i != fakePages - 1)
 					pagesKeyboard.push(callback(fakePage + i + ' ⊳', ACTION_TYPES.page + ':' + destinationPage + ';' + searchType));
 				else
-					pagesKeyboard.push(callback(fakePage + i, ACTION_TYPES.page + ':' + destinationPage + ';' + searchType));			
-				i++;			
+					pagesKeyboard.push(callback(fakePage + i, ACTION_TYPES.page + ':' + destinationPage + ';' + searchType));	
+				i++;		
 			}
 			destinationPage = fakePages / 2 + 0.5;
 			pagesKeyboard.push(callback((fakePage == fakePages ? '·' + fakePages + '·' : (fakePage + i != fakePages ? fakePages + ' ⊵': fakePages)), ACTION_TYPES.page + ':' + destinationPage + ';' + searchType));
@@ -187,12 +160,12 @@ function SearchMenu(fetchURL, page) {
 		else if(fakePages != 1){
 			i = 0;
 			while(pagesKeyboard.length < fakePages){
-				let destinationPage = 1 + 0.5 * i;
+				destinationPage = 1 + 0.5 * i;
 				pagesKeyboard.push(callback((1 + i == fakePage ? '·' + parseInt(1 + i) + '·': 1 + i), ACTION_TYPES.page + ':' + destinationPage + ';' + searchType));
 				i++;
 			}
 		}
-		
+
 		let keyboard, kb2;
 		if(fakePages != 1) {
 			kb2 = Keyboard.make(pagesKeyboard);
@@ -205,4 +178,4 @@ function SearchMenu(fetchURL, page) {
 	}
 }
 
-module.exports = SearchMenu;
+export default SearchMenu;

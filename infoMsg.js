@@ -1,33 +1,16 @@
-const { Telegraf } = require('telegraf');
-require('dotenv').config();
-const fetch = require('node-fetch');
-const { Keyboard, Key } = require('telegram-keyboard');
-const { callback } = Key;
+import Telegraf from 'telegraf';
+import dotenv from 'dotenv';
+dotenv.config();
+import fetch from 'node-fetch';
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-const ACTION_TYPES = {
-    movieId: 'movieId',
-	personId: 'personId',
-	tvId : 'tvId',
-    page: 'page',
-	recommendMovies: 'recommendMovies',
-	recommendTv: 'recommendTv',
-	starredInMovies : 'starredInMovies',
-	starredInTv : 'starredInTv',
-	castMovies: 'castMovies',
-	crewMovies: 'crewMovies',
-	castTv : 'castTv',
-	crewTv : 'crewTv',
-	popularMovies : 'popularMovies',
-	popularPeople : 'popularPeople',
-	popularTv : 'popularTv'
-}
+import { ACTION_TYPES } from './actionAndSearchTypes.js';
 
 function Info(chatId, contentId) {
 	this.chatId = chatId;
 	this.contentId = contentId;
 	
-	this.displayInfo = async function(actionType){
+	this.displayInfo = async function(actionType) {
 		if(actionType == ACTION_TYPES.movieId){
 			let detailsURL = `https://api.themoviedb.org/3/movie/${this.contentId}?api_key=${process.env.API_KEY}&language=en-US`;
 			let creditsURL = `https://api.themoviedb.org/3/movie/${this.contentId}/credits?api_key=${process.env.API_KEY}&language=en-US`;
@@ -79,6 +62,7 @@ function Info(chatId, contentId) {
 				caption += `${details.runtime % 60}min`;
 			}
 			if(details.vote_average != ''){
+				let rating;
 				if(details.vote_average >= 7)
 					rating = `🟢`;
 				else if(details.vote_average < 7 && details.vote_average > 4)
@@ -234,6 +218,7 @@ function Info(chatId, contentId) {
 			if(details.episode_run_time != false && details.episode_run_time != undefined)
 				caption += `\n🕔 ${details.episode_run_time[0]}min`;
 			if(details.vote_average != ''){
+				let rating;
 				if(details.vote_average >= 7)
 					rating = `🟢`;
 				else if(details.vote_average < 7 && details.vote_average > 4)
@@ -247,7 +232,7 @@ function Info(chatId, contentId) {
 
 			let creator = details.created_by.map(a => a.name);
 			if(creator != '')
-				caption += `\n\n📽 Created by: ${director.join(', ')}`;
+				caption += `\n\n📽 Created by: ${creator.join(', ')}`;
 			
 			if(details.overview != '')
 				caption += `\n\n${details.overview}`;	
@@ -277,4 +262,4 @@ function Info(chatId, contentId) {
 	}
 }
 
-module.exports = Info;
+export default Info;

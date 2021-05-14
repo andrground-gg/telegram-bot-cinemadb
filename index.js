@@ -1,41 +1,19 @@
-const { Telegraf } = require('telegraf');
-const { Keyboard } = require('telegram-keyboard');
-const session = require('telegraf/session');
-const Stage = require('telegraf/stage');
-const Scene = require('telegraf/scenes/base');
-const { enter, leave } = Stage;
-require('dotenv').config();
+import Telegraf from 'telegraf';
+import { Keyboard } from 'telegram-keyboard';
+import session from 'telegraf/session.js';
+import Stage from 'telegraf/stage.js';
+import Scene from 'telegraf/scenes/base.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const bot = new Telegraf(process.env.BOT_TOKEN, { polling: true });
 
-const MovieSearchMenu = require('./movieSearchMenu.js');
-const PeopleSearchMenu = require('./peopleSearchMenu.js');
-const TvSearchMenu = require('./tvSearchMenu.js');
-const Info = require('./infoMsg.js');
+import MovieSearchMenu from './movieSearchMenu.js';
+import PeopleSearchMenu from './peopleSearchMenu.js';
+import TvSearchMenu from './tvSearchMenu.js';
+import Info from './infoMsg.js';
 
-const ACTION_TYPES = {
-    movieId: 'movieId',
-	personId: 'personId',
-	tvId : 'tvId',
-    page: 'page',
-	recommendMovies: 'recommendMovies',
-	recommendTv: 'recommendTv',
-	starredInMovies : 'starredInMovies',
-	starredInTv : 'starredInTv',
-	castMovies: 'castMovies',
-	crewMovies: 'crewMovies',
-	castTv : 'castTv',
-	crewTv : 'crewTv',
-	popularMovies : 'popularMovies',
-	popularPeople : 'popularPeople',
-	popularTv : 'popularTv'
-}
-
-const SEARCH_TYPES = {
-	movies: 'movie',
-	people: 'people',
-	tvShows : 'tvShows'
-}
+import { ACTION_TYPES, SEARCH_TYPES } from './actionAndSearchTypes.js';
 
 let peopleInfos = [];
 let movieInfos = [];
@@ -94,10 +72,12 @@ bot.on('message', (ctx) => {
 				['📺 Search for TV Shows'],
 			]);
 	ctx.reply('⏺ Choose what type of content you want to search for', keyboard.reply());
+
+	console.log('general: ' + ctx.message.from.username + ': ' + ctx.message.text);
 });
 
 searchMovies.enter((ctx) => {
-	const keyboard = Keyboard.make([['⭐️ Popular Movies'],['Back ➡️']]);
+	const keyboard = Keyboard.make([['⭐️ Popular Movies'], ['Back ➡️']]);
 	ctx.reply("🔎 Enter movie title:", keyboard.reply());
 });
 searchMovies.hears('Back ➡️', (ctx) => {
@@ -113,6 +93,8 @@ searchMovies.hears('⭐️ Popular Movies', (ctx) => {
 	searchMenus.push(new MovieSearchMenu(ctx.update.message.chat.id, ACTION_TYPES.popularMovies));
 	searchMenus[searchMenus.length - 1].displayMovies(1)
 		.catch(() => searchMenus.pop());
+
+	console.log('movies: ' + ctx.message.from.username + ': popular');
 });
 searchPeople.enter((ctx) => {
 	const keyboard = Keyboard.make([['⭐️ Popular People'],['Back ➡️']]);
@@ -131,6 +113,8 @@ searchPeople.hears('⭐️ Popular People', (ctx) => {
 	searchMenus.push(new PeopleSearchMenu(ctx.update.message.chat.id, ACTION_TYPES.popularPeople));
 	searchMenus[searchMenus.length - 1].displayPeople(1)
 		.catch(() => searchMenus.pop());
+
+	console.log('people: ' + ctx.message.from.username + ': popular');
 });
 searchTVShows.enter((ctx) => {
 	const keyboard = Keyboard.make([['⭐️ Popular TV Shows'],['Back ➡️']]);
@@ -149,22 +133,30 @@ searchTVShows.hears('⭐️ Popular TV Shows', (ctx) => {
 	searchMenus.push(new TvSearchMenu(ctx.update.message.chat.id, ACTION_TYPES.popularTv));
 	searchMenus[searchMenus.length - 1].displayTv(1)
 		.catch(() => searchMenus.pop());
-});
 
-searchMovies.on('message', function(ctx){
+	console.log('tvs: ' + ctx.message.from.username + ': popular');
+});
+bot.on('text', () => console.log("ADAD"))
+searchMovies.on('message', function(ctx) {
 	searchMenus.push(new MovieSearchMenu(ctx.update.message.chat.id,  ACTION_TYPES.movieId, ctx.message.text, ''));	
 	searchMenus[searchMenus.length - 1].displayMovies(1)
 		.catch(() => searchMenus.pop());
+
+	console.log('movies: ' + ctx.message.from.username + ': ' + ctx.message.text);
 });
-searchPeople.on('message', function(ctx){
+searchPeople.on('message', function(ctx) {
 	searchMenus.push(new PeopleSearchMenu(ctx.update.message.chat.id, ACTION_TYPES.personId, ctx.message.text, ''));	
 	searchMenus[searchMenus.length - 1].displayPeople(1)
 		.catch(() => searchMenus.pop());
+
+	console.log('people: ' + ctx.message.from.username + ': ' + ctx.message.text);
 });
-searchTVShows.on('message', function(ctx){
+searchTVShows.on('message', function(ctx) {
 	searchMenus.push(new TvSearchMenu(ctx.update.message.chat.id, ACTION_TYPES.tvId, ctx.message.text, ''));	
 	searchMenus[searchMenus.length - 1].displayTv(1)
 		.catch(() => searchMenus.pop());
+
+	console.log('tvs: ' + ctx.message.from.username + ': ' + ctx.message.text);
 });
 bot.on('callback_query', async (ctx) => {
 	const actionType = ctx.callbackQuery.data.substr(0, ctx.callbackQuery.data.indexOf(':'));
@@ -241,7 +233,6 @@ bot.on('callback_query', async (ctx) => {
 			.catch(() => searchMenus.pop());
 	}
 });
-
 
 bot.launch()
 	.then(console.log('bot launched'));

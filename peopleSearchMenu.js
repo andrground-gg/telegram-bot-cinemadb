@@ -1,33 +1,11 @@
-const { Telegraf } = require('telegraf');
-require('dotenv').config();
-const { Keyboard} = require('telegram-keyboard');
+import Telegraf from 'telegraf';
+import dotenv from 'dotenv';
+dotenv.config();
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-const SearchMenu = require('./searchMenu.js');
+import SearchMenu from './searchMenu.js';
 
-const ACTION_TYPES = {
-    movieId: 'movieId',
-	personId: 'personId',
-	tvId : 'tvId',
-    page: 'page',
-	recommendMovies: 'recommendMovies',
-	recommendTv: 'recommendTv',
-	starredInMovies : 'starredInMovies',
-	starredInTv : 'starredInTv',
-	castMovies: 'castMovies',
-	crewMovies: 'crewMovies',
-	castTv : 'castTv',
-	crewTv : 'crewTv',
-	popularMovies : 'popularMovies',
-	popularPeople : 'popularPeople',
-	popularTv : 'popularTv'
-}
-
-const SEARCH_TYPES = {
-	movies: 'movie',
-	people: 'people',
-	tvShows : 'tvShows'
-}
+import { ACTION_TYPES, SEARCH_TYPES } from './actionAndSearchTypes.js';
 
 function PeopleSearchMenu(chatId, actionType, query = '', contentId = '') {
 	this.page = 1;
@@ -95,4 +73,4 @@ function PeopleSearchMenu(chatId, actionType, query = '', contentId = '') {
 	}
 }
 
-module.exports = PeopleSearchMenu;
+export default PeopleSearchMenu;
